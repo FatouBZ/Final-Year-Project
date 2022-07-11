@@ -1,20 +1,47 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_store_app/customer_screen/customer_orders.dart';
 import 'package:multi_store_app/customer_screen/wishlist.dart';
 import 'package:multi_store_app/main_screen/cart.dart';
 import 'package:multi_store_app/wigets/appbar_widget.dart';
 
+import '../wigets/alert_dialog.dart';
+
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+    final String documentId;
+  const ProfileScreen({Key? key, required this.documentId}) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+      CollectionReference customers = FirebaseFirestore.instance.collection('customers');
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return 
+    FutureBuilder<DocumentSnapshot>(
+      future: customers.doc(widget.documentId).get(),
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+
+        if (snapshot.hasError) {
+          return const Text("Something went wrong");
+        }
+
+        if (snapshot.hasData && !snapshot.data!.exists) {
+          return const Text("Document does not exist");
+        }
+
+        if (snapshot.connectionState == ConnectionState.done) {
+          Map<String, dynamic>data = snapshot.data!.data() as Map<String, dynamic>;
+          return //Text("Full Name: ${data['full_name']} ${data['last_name']}");
+
+
+          Scaffold(
       backgroundColor: Colors.grey.shade300,
       body: Stack(
         children: [
@@ -52,15 +79,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         padding: const EdgeInsets.only(top: 25, left: 30),
                         child: Row(
                           children: [
+                            data['profileimage']==''? 
                             const CircleAvatar(
-                                radius: 50,
+                              radius: 50,
                                 backgroundImage:
-                                    (AssetImage('images/inapp/guest.jpg'))),
+                                  AssetImage('images/inapp/guest.jpg'))
+                             :CircleAvatar(
+                             radius: 50,
+                                backgroundImage:
+                                 
+                                   NetworkImage(data['profileimage']),
+                            ),
+                            
                             Padding(
                               padding: const EdgeInsets.only(left: 25),
                               child: Text(
-                                'guest'.toUpperCase(),
+                                data['name']==''? 'guess'.toUpperCase() :
+                                data['name'].toUpperCase(),
                                 style: const TextStyle(
+                                  fontSize: 24,
                                     fontWeight: FontWeight.w600),
                               ),
                             ),
@@ -176,7 +213,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const SizedBox(
                             height: 150,
                             child: Image(
-                              image: AssetImage('images/inapp/easywayLogo.png'),
+                              image: AssetImage('images/inapp/shopping-cart.png'),
                               color: Color.fromARGB(255, 66, 54, 54),
                               fit: BoxFit.fitWidth,
                             ),
@@ -190,22 +227,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(16)),
-                              child: Column(children: const [
+                              child: Column(children:  [
                                 RepeatedListTile(
                                   icon: Icons.email,
-                                  subTitle: 'example@gmail.com',
+                                  subTitle: data['email']==''? 'guess@gmail.com' 
+                                  :data['email'],
                                   title: 'Email Address',
                                 ),
-                                BlueDivider(),
+                              const  BlueDivider(),
                                 RepeatedListTile(
                                   icon: Icons.phone,
-                                  subTitle: '000000',
-                                  title: 'Phone Number',
+                                  subTitle: data['phone'] ==''? 'guess: +11111111' 
+                                  :data['phone '],
+                                  title: 'Phone Number' 
                                 ),
-                                BlueDivider(),
+                              const  BlueDivider(),
                                 RepeatedListTile(
                                   icon: Icons.location_pin,
-                                  subTitle: 'Madina Ghana',
+                                  subTitle: data['address']==''? 'guess: accra -Ghana' 
+                                  :data['address '],
                                   title: 'Address',
                                 ),
                               ]),
@@ -238,9 +278,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   title: 'Log Out',
                                   subTitle: '',
                                   icon: Icons.logout,
-                                  onPressed: () {
-                                    Navigator.pushReplacementNamed(
-                                        context, '/welcom_screen');
+                                  onPressed: () async{
+                                    MyAlertDialog.showMyDialog(
+                                      context: context, 
+                                      title: 'Log Out', 
+                                      content: 'Are you sure to log out ?',
+                                      tabNo: (){
+                                        Navigator.pop(context);
+                                      },
+                                      tabYes: 
+                                         () async{
+                                         await FirebaseAuth.instance.signOut();
+                                         Navigator.pop(context);
+                                         Navigator.pushReplacementNamed(context,  '/welcom_screen');
+                                        },
+                                      );
+                                      
                                   },
                                 ),
                               ]),
@@ -257,8 +310,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
     );
+        }
+
+        return const Center(child: CircularProgressIndicator(color: Colors.blue,),);
+      },
+    );
+    
   }
 }
+
+
 
 class BlueDivider extends StatelessWidget {
   const BlueDivider({

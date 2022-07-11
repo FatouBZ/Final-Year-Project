@@ -62,6 +62,7 @@ class HaveAccount extends StatelessWidget {
   }
 }
 
+// ignore: camel_case_types
 class authenticationHeaderLabel extends StatelessWidget {
   final String headerLabel;
   const authenticationHeaderLabel({

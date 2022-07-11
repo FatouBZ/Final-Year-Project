@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "974112094149",
+    "project_id": "easy-way-87880",
+    "storage_bucket": "easy-way-87880.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:974112094149:android:7dd58cd0dbf2435de8fdac",
+        "android_client_info": {
+          "package_name": "com.example.easy_way"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "974112094149-b65dt6gfjue615uvd9p59mnebn3scobn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.easy_way",
+            "certificate_hash": "a80f09faf9c52a8df46260bc4c77b571cf39cfe6"
+          }
+        },
+        {
+          "client_id": "974112094149-brp6s1ao2fvicahtig09eite21t5uhsi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9NYSQ5OkQiLtl-ZpqN8ApB7A84vlV56s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "974112094149-brp6s1ao2fvicahtig09eite21t5uhsi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
