@@ -13,10 +13,10 @@ class SupplierRegister extends StatefulWidget {
   const SupplierRegister({Key? key}) : super(key: key);
 
   @override
-  State<SupplierRegister> createState() => _CustomerSignupState();
+  State<SupplierRegister> createState() => _SupplierSignupState();
 }
 
-class _CustomerSignupState extends State<SupplierRegister> {
+class _SupplierSignupState extends State<SupplierRegister> {
   late String storeName;
   late String email;
   late String password;
@@ -71,7 +71,7 @@ class _CustomerSignupState extends State<SupplierRegister> {
     }
   }
 
-void signup() async{
+void signUp() async{
   setState(() {
     processing = true;
   });
@@ -283,7 +283,8 @@ void signup() async{
                         haveAccount: 'already have account?',
                         actionLabel: 'Log In',
                         onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/customer_login');
+                          Navigator.pushReplacementNamed(
+                            context, '/supplier_login');
                         },
                       ),
                      processing ==true  
@@ -291,7 +292,7 @@ void signup() async{
                      : AuthenticationMainButton(
                         mainButtonLabel: 'Sign Up',
                         onPressed: (){
-                          signup();
+                        signUp();
                         },
                       )
                     ],

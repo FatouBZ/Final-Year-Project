@@ -22,9 +22,9 @@ List<ItemsData> items = [
   ItemsData(label: 'Home Appliances'),
   ItemsData(label: 'kids'),
   ItemsData(label: 'Beauty'),
-  ItemsData(label: 'Services'),
-  ItemsData(label: 'Company'),
-  ItemsData(label: 'Foods')
+  //ItemsData(label: 'Services'),
+  //ItemsData(label: 'Company'),
+  //ItemsData(label: 'Foods')
 ];
 
 class CategoryScreen extends StatefulWidget {

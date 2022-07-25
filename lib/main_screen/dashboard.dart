@@ -2,10 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_store_app/dashboad_component/edit_business.dart';
 import 'package:multi_store_app/dashboad_component/manage_product.dart';
-import 'package:multi_store_app/dashboad_component/my_store.dart';
 import 'package:multi_store_app/dashboad_component/sup_statics.dart';
 import 'package:multi_store_app/dashboad_component/supplier_balance.dart';
 import 'package:multi_store_app/dashboad_component/supplier_order.dart';
+import 'package:multi_store_app/minor_screen/visit_store.dart';
 import 'package:multi_store_app/wigets/appbar_widget.dart';
 
 import '../wigets/alert_dialog.dart';
@@ -27,12 +27,12 @@ List<IconData> icons = [
   Icons.show_chart,
 ];
 List<Widget> pages = [
-  Mystore(),
-  SupplierOrders(),
-  EditBusiness(),
-  ManageProducts(),
-  BalanceScreen(),
-  StaticsScreen()
+  VisitStore(suppId: FirebaseAuth.instance.currentUser!.uid),
+  const SupplierOrders(),
+  const EditBusiness(),
+  const ManageProducts(),
+  const BalanceScreen(),
+  const StaticsScreen()
 ];
 
 class DashboardScreen extends StatelessWidget {

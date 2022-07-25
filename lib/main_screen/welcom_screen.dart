@@ -30,8 +30,8 @@ class _WelcomScreenState extends State<WelcomScreen>
   late AnimationController _controller;
   late String _uid;
   bool processing = false;
-      CollectionReference customers = 
-      FirebaseFirestore.instance.collection('customers');
+      CollectionReference anonymous = 
+      FirebaseFirestore.instance.collection('anonymous');
 
   @override
   void initState() {
@@ -220,7 +220,7 @@ class _WelcomScreenState extends State<WelcomScreen>
                             await FirebaseAuth.instance.signInAnonymously()
                             .whenComplete(() async{
                               _uid = FirebaseAuth.instance.currentUser!.uid;
-                               await customers.doc(_uid).set({
+                               await anonymous.doc(_uid).set({
                                 'name': '',
                                 'email': '',
                                 'profileimage': '',

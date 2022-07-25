@@ -15,7 +15,7 @@ class BlueButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 35,
-      width: MediaQuery.of(context).size.width * 0.30,
+      width: MediaQuery.of(context).size.width * width,
       decoration: BoxDecoration(
           color: const Color.fromARGB(255, 33, 212, 243),
           borderRadius: BorderRadius.circular(25)),

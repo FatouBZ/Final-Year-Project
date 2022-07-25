@@ -149,7 +149,7 @@ void logIn() async{
                         haveAccount: 'Don\'t Have Account? ',
                         actionLabel: 'Sign Up',
                         onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/customer_signup');
+                          Navigator.pushReplacementNamed(context, '/supplier_signup');
                         },
                       ),
                      processing ==true  

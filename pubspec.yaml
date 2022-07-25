@@ -40,6 +40,10 @@ dependencies:
   firebase_auth: ^3.4.1
   firebase_storage: ^10.3.1
   firebase_core: ^1.19.1
+  uuid: ^3.0.6
+  staggered_grid_view_flutter: ^0.0.4
+  flutter_swiper_null_safety: ^1.0.2
+  font_awesome_flutter: ^10.1.0
 
 dev_dependencies:
   flutter_test:
@@ -103,4 +107,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
-  
+  fonts:
+   - family: Acme
+     fonts:
+     - asset: fonts/Acme-Regular.ttf
+   - family: AkayaTelivigala
+     fonts:
+      - asset: fonts/AkayaTelivigala-Regular.ttf
