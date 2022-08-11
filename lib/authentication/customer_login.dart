@@ -3,7 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import '../wigets/authentication_widget.dart';
-import '../wigets/snackBar_widget.dart';
+import '../wigets/snack_bar_widget.dart';
 
 class CustomerLogin extends StatefulWidget {
   const CustomerLogin({Key? key}) : super(key: key);
@@ -30,14 +30,17 @@ void logIn() async{
     processing = true;
   });
    if (_formKey.currentState!.validate()) {
+    void navigate (){
+      Navigator.pushReplacementNamed(context, '/customer_home');
+    }
                              
                               try{
                                 await FirebaseAuth.instance
                               .signInWithEmailAndPassword(email: email, password: password);
                             
                                _formKey.currentState!.reset();
-                             
-                              Navigator.pushReplacementNamed(context, '/customer_home');
+                               navigate();
+                            
                               } on FirebaseAuthException catch(e){
                                  if (e.code == 'user-not-found') {
                                   setState(() {

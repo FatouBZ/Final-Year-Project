@@ -11,6 +11,7 @@ class VisitStore extends StatefulWidget {
   const VisitStore({ Key? key, required this.suppId}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _VisitStoreState createState() => _VisitStoreState();
 }
 
@@ -18,7 +19,7 @@ class _VisitStoreState extends State<VisitStore> {
   bool following = false;
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _productsStream = FirebaseFirestore.instance
+    final Stream<QuerySnapshot> productsStream = FirebaseFirestore.instance
      .collection('products')
      .where('sid', isEqualTo: widget.suppId)
     .snapshots();
@@ -126,7 +127,7 @@ class _VisitStoreState extends State<VisitStore> {
             body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: StreamBuilder<QuerySnapshot>(
-      stream: _productsStream,
+      stream: productsStream,
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
           return const Text('Something went wrong');
@@ -160,7 +161,7 @@ class _VisitStoreState extends State<VisitStore> {
             floatingActionButton:
              FloatingActionButton(
               backgroundColor: Colors.green,
-               child:Icon(FontAwesomeIcons.whatsapp,
+               child:const Icon(FontAwesomeIcons.whatsapp,
                 color: Colors.white,
                 size: 40,
                ) ,

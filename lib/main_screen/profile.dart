@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_store_app/customer_screen/customer_orders.dart';
 import 'package:multi_store_app/customer_screen/wishlist.dart';
@@ -96,8 +95,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Padding(
                               padding: const EdgeInsets.only(left: 25),
                               child: Text(
-                                data['name']==''? 'guess'.toUpperCase() :
-                                data['name'].toUpperCase(),
+                                data['name']==''
+                                ? 'guest'.toUpperCase() 
+                                : data['name'].toUpperCase(),
                                 style: const TextStyle(
                                   fontSize: 24,
                                     fontWeight: FontWeight.w600),
@@ -200,7 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                  Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const WishlistsScreen(),
+                                      builder: (context) => const WishlistScreen(),
                                     ));
                               },
                             ),
@@ -232,7 +232,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Column(children:  [
                                 RepeatedListTile(
                                   icon: Icons.email,
-                                  subTitle: data['email']==''? 'guess@gmail.com' 
+                                  subTitle: data['email']==''
+                                  ? 'guest@gmail.com' 
                                   :data['email'],
                                   title: 'Email Address',
                                 ),
@@ -240,14 +241,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 RepeatedListTile(
                                   icon: Icons.phone,
                                   subTitle: data['phone'] ==''? 'guess: +11111111' 
-                                  :data['phone '],
+                                  :data['phone'],
                                   title: 'Phone Number' 
                                 ),
                               const  BlueDivider(),
                                 RepeatedListTile(
                                   icon: Icons.location_pin,
-                                  subTitle: data['address']==''? 'guess: accra -Ghana' 
-                                  :data['address '],
+                                  subTitle: data['address']==''? 'guess: accra - Ghana' 
+                                  :data['address'],
                                   title: 'Address',
                                 ),
                               ]),
@@ -291,8 +292,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       tabYes: 
                                          () async{
                                          await FirebaseAuth.instance.signOut();
-                                         Navigator.pop(context);
+                                         await Future.delayed(const Duration(microseconds: 100)).whenComplete(() {
+                                          Navigator.pop(context);
                                          Navigator.pushReplacementNamed(context,  '/welcom_screen');
+                                         });
+                                         
                                         },
                                       );
                                       

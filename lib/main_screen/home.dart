@@ -1,16 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../gallery/accessories_galery.dart';
 import '../gallery/bags_galery.dart';
 import '../gallery/beauty_category.dart';
 import '../gallery/electronics_galery.dart';
-import '../gallery/homeAppliance_galery.dart';
+import '../gallery/home_appliance_galery.dart';
 import '../gallery/kids_galery.dart';
 import '../gallery/men_gallery.dart';
 import '../gallery/shoes_galery.dart';
 import '../gallery/women_galery.dart';
-import '../minor_screen/search.dart';
-import '../wigets/HomeSearch.dart';
+import '../wigets/home_search.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

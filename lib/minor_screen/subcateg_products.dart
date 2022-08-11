@@ -21,7 +21,7 @@ class _SubCategProductsState extends State<SubCategProducts> {
 
   @override
   Widget build(BuildContext context) {
-final Stream<QuerySnapshot> _productsStream = FirebaseFirestore.instance
+final Stream<QuerySnapshot> productsStream = FirebaseFirestore.instance
  .collection('products')
  .where('maincategory', isEqualTo: widget.mainCategName)
   .where('subcategory', isEqualTo: widget.subCategName)
@@ -37,7 +37,7 @@ final Stream<QuerySnapshot> _productsStream = FirebaseFirestore.instance
         title: AppBarTitle(title: widget.subCategName),
       ),
       body:StreamBuilder<QuerySnapshot>(
-      stream: _productsStream,
+      stream: productsStream,
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
           return const Text('Something went wrong');

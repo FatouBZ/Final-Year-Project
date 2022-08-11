@@ -3,12 +3,11 @@ import 'package:multi_store_app/categories/accessory_categ.dart';
 import 'package:multi_store_app/categories/bags_categ.dart';
 import 'package:multi_store_app/categories/beauty_categ.dart';
 import 'package:multi_store_app/categories/electronics_categ.dart';
-import 'package:multi_store_app/categories/homeAppliance_categ.dart';
+import 'package:multi_store_app/categories/home_appliance_categ.dart';
 import 'package:multi_store_app/categories/kids_categ.dart';
 import 'package:multi_store_app/categories/men_categ.dart';
 import 'package:multi_store_app/categories/shoes_categ.dart';
-import 'package:multi_store_app/utilities/categ_list.dart';
-import 'package:multi_store_app/wigets/HomeSearch.dart';
+import 'package:multi_store_app/wigets/home_search.dart';
 
 import '../categories/women_categ.dart';
 
@@ -37,6 +36,7 @@ class CategoryScreen extends StatefulWidget {
 class _CategoryScreenState extends State<CategoryScreen> {
   final PageController _pageController = PageController();
 
+  @override
   void initState() {
     for (var element in items) {
       element.isSelected = false;

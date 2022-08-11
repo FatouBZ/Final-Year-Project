@@ -3,15 +3,25 @@ import 'package:multi_store_app/authentication/customer_login.dart';
 import 'package:multi_store_app/authentication/customer_signup.dart';
 import 'package:multi_store_app/main_screen/customer_home.dart';
 import 'package:multi_store_app/main_screen/welcom_screen.dart';
-import 'package:multi_store_app/supplier_login.dart';
-import 'package:multi_store_app/supplier_signup.dart';
+import 'package:multi_store_app/provider/wishlist_provider.dart';
+import 'package:multi_store_app/authentication/supplier_login.dart';
+import 'package:multi_store_app/authentication/supplier_signup.dart';
+import 'package:provider/provider.dart';
 import 'main_screen/supplier_home.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'provider/cart_provider.dart';
 
 void main() async{
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized(
+    
+  );
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+     ChangeNotifierProvider (create: (_) => Cart()),
+      ChangeNotifierProvider (create: (_) => Wish())
+    ],
+    child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

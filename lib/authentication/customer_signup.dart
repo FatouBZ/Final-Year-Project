@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import "package:flutter/material.dart";
 import '../wigets/authentication_widget.dart';
-import '../wigets/snackBar_widget.dart';
+import '../wigets/snack_bar_widget.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class CustomerRegister extends StatefulWidget {
@@ -85,6 +85,7 @@ void signup() async{
                               firebase_storage.Reference ref = firebase_storage
                               .FirebaseStorage.instance
                               .ref('customer-images/$email.jpg');
+        
 
                               await ref.putFile(File(_imageFile!.path));
                               _uid = FirebaseAuth.instance.currentUser!.uid;
@@ -102,8 +103,10 @@ void signup() async{
                               setState(() {
                                 _imageFile = null;
                               });
-
-                              Navigator.pushReplacementNamed(context, '/customer_login');
+                              await Future.delayed(const Duration(microseconds: 100)).whenComplete(() => 
+                              Navigator.pushReplacementNamed(context, '/customer_login')
+                               );
+          
                               } on FirebaseAuthException catch(e){
                                 if (e.code == 'weak-password') {
                                   setState(() {

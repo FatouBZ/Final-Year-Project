@@ -60,8 +60,11 @@ class DashboardScreen extends StatelessWidget {
                                       tabYes: 
                                          () async{
                                          await FirebaseAuth.instance.signOut();
-                                         Navigator.pop(context);
+                                         await Future.delayed(const Duration(microseconds: 100)).whenComplete(() {
+                                          Navigator.pop(context);
                                          Navigator.pushReplacementNamed(context,  '/welcom_screen');
+                                         });
+                                         
                                         },
                                       );
                         },

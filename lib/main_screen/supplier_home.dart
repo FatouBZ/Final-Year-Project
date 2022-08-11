@@ -1,3 +1,6 @@
+import 'package:badges/badges.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_store_app/main_screen/dashboard.dart';
 import 'package:multi_store_app/main_screen/home.dart';
@@ -24,6 +27,22 @@ class _SupplierHomeScreenState extends State<SupplierHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+
+return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+        .collection('orders')
+        .where('sid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .where('deliverystatus', isEqualTo: 'preparing')
+        .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot){
+         
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Material(
+            child:   Center(child: CircularProgressIndicator(),));
+        }
+        
+
     return Scaffold(
       body: _tabs[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -32,14 +51,23 @@ class _SupplierHomeScreenState extends State<SupplierHomeScreen> {
           type: BottomNavigationBarType.fixed,
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
           currentIndex: _selectedIndex,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(
+          items:  [
+           const  BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          const  BottomNavigationBarItem(
                 icon: Icon(Icons.search), label: 'Category'),
-            BottomNavigationBarItem(icon: Icon(Icons.shop), label: 'Stores'),
+          const  BottomNavigationBarItem(icon: Icon(Icons.shop), label: 'Stores'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.dashboard), label: 'Dashboard'),
-            BottomNavigationBarItem(icon: Icon(Icons.upload), label: 'Upload'),
+                icon: Badge(
+                  showBadge: snapshot.data!.docs.isEmpty? false : true,
+                      padding: const EdgeInsets.all(2),
+                      badgeColor: const Color.fromARGB(255, 33, 212, 243),
+                      badgeContent: Text(
+                        snapshot.data!.docs.length.toString(),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),),
+                  
+                  
+                  child: const Icon(Icons.dashboard)), label: 'Dashboard'),
+          const  BottomNavigationBarItem(icon: Icon(Icons.upload), label: 'Upload'),
           ],
           onTap: (index) {
             setState(() {
@@ -47,5 +75,6 @@ class _SupplierHomeScreenState extends State<SupplierHomeScreen> {
             });
           }),
     );
-  }
+  });
+}
 }

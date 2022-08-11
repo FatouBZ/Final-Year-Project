@@ -2,10 +2,8 @@ import 'dart:math';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:multi_store_app/main_screen/supplier_home.dart';
-import 'package:multi_store_app/wigets/Blue_Button.dart';
+import 'package:multi_store_app/wigets/blue_button.dart';
 
 const textColors = [
   Color.fromARGB(255, 33, 212, 243),
@@ -22,16 +20,16 @@ class WelcomScreen extends StatefulWidget {
   
 
   @override
-  _WelcomScreenState createState() => _WelcomScreenState();
+  
+  State<WelcomScreen> createState() => _WelcomScreenState();
 }
 
 class _WelcomScreenState extends State<WelcomScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late String _uid;
   bool processing = false;
-      CollectionReference anonymous = 
-      FirebaseFirestore.instance.collection('anonymous');
+       CollectionReference customers = FirebaseFirestore.instance.collection('customers');
+        late String _uid;
 
   @override
   void initState() {
@@ -210,17 +208,19 @@ class _WelcomScreenState extends State<WelcomScreen>
                         child: const Image(
                             image: AssetImage('images/inapp/facebook.jpg')),
                       ),
-                      processing == true ?  const CircularProgressIndicator():
-                       GoogleFaceboobLogIn(
-                          label: 'Guess',
+                      processing == true ?  
+                      const CircularProgressIndicator()
+                      :GoogleFaceboobLogIn(
+                          label: 'Guest',
                           onPressed: () async{
                             setState(() {
                               processing = true;
                             });
-                            await FirebaseAuth.instance.signInAnonymously()
+                            await FirebaseAuth.instance
+                            .signInAnonymously()
                             .whenComplete(() async{
                               _uid = FirebaseAuth.instance.currentUser!.uid;
-                               await anonymous.doc(_uid).set({
+                               await customers.doc(_uid).set({
                                 'name': '',
                                 'email': '',
                                 'profileimage': '',
@@ -228,11 +228,11 @@ class _WelcomScreenState extends State<WelcomScreen>
                                 'address': '',
                                 'cid': _uid
                               });
-                            });
-                                
-                            Navigator.pushReplacementNamed(
-                              context, '/customer_home');
-
+                            });  
+                            await Future.delayed(const Duration(microseconds: 100)).whenComplete(() => 
+                             Navigator.pushReplacementNamed(
+                              context, '/customer_home')
+                               );   
                           },
                           child: const Icon(
                             Icons.person,

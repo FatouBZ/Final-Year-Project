@@ -4,7 +4,11 @@ import 'package:multi_store_app/main_screen/cart.dart';
 import 'package:multi_store_app/main_screen/home.dart';
 import 'package:multi_store_app/main_screen/profile.dart';
 import 'package:multi_store_app/main_screen/stores.dart';
+import 'package:provider/provider.dart';
+import '../provider/cart_provider.dart';
 import 'category.dart';
+import 'package:badges/badges.dart';
+
 
 class CustomerHomeScreen extends StatefulWidget {
   const CustomerHomeScreen({Key? key}) : super(key: key);
@@ -33,14 +37,23 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
           type: BottomNavigationBarType.fixed,
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
           currentIndex: _selectedIndex,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(
+          items:  [
+           const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+           const BottomNavigationBarItem(
                 icon: Icon(Icons.search), label: 'Category'),
-            BottomNavigationBarItem(icon: Icon(Icons.shop), label: 'Stores'),
+          const  BottomNavigationBarItem(icon: Icon(Icons.shop), label: 'Stores'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.shopping_cart), label: 'Cart'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
+              
+                icon: Badge(
+                      showBadge: context.read<Cart>().getItems.isEmpty? false :true,
+                      padding: const EdgeInsets.all(2),
+                      badgeColor: const Color.fromARGB(255, 33, 212, 243),
+                      badgeContent: Text(context.watch<Cart>().getItems.length.toString(),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),),
+                child: const Icon (Icons.shopping_cart)), 
+                label: 'Cart'
+                ),
+          const  BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
           ],
           onTap: (index) {
             setState(() {
