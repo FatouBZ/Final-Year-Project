@@ -55,11 +55,11 @@ class StoresScreen extends StatelessWidget {
                                 snapshot.data!.docs[index]['storelogo'],
                                 fit: BoxFit.cover,),
                                 ))
-                           ],
+                           ], 
                         ),
                         Text(snapshot.data!.docs[index]['storename'].toLowerCase(),
                         style: const TextStyle(
-                          fontSize: 26,
+                          fontSize: 16,
                           fontFamily: 'AkayaTelivigala',
                         ),)
                       ],

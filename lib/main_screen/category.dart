@@ -8,7 +8,7 @@ import 'package:multi_store_app/categories/kids_categ.dart';
 import 'package:multi_store_app/categories/men_categ.dart';
 import 'package:multi_store_app/categories/shoes_categ.dart';
 import 'package:multi_store_app/wigets/home_search.dart';
-
+import '../categories/service_categ.dart';
 import '../categories/women_categ.dart';
 
 List<ItemsData> items = [
@@ -21,7 +21,7 @@ List<ItemsData> items = [
   ItemsData(label: 'Home Appliances'),
   ItemsData(label: 'kids'),
   ItemsData(label: 'Beauty'),
-  //ItemsData(label: 'Services'),
+  ItemsData(label: 'Services'),
   //ItemsData(label: 'Company'),
   //ItemsData(label: 'Foods')
 ];
@@ -118,9 +118,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           HomeApplianceCategory(),
           KidCategory(),
           BeautyCategory(),
-          Center(child: Text('Services category')),
-          Center(child: Text('companies category')),
-          Center(child: Text('Foods category')),
+          ServiceCategory(),
         ],
       ),
     );

@@ -165,7 +165,7 @@ void uploadData () async{
                           'instock' :quantity,
                           'productname' :proName,
                           'sid': FirebaseAuth.instance.currentUser!.uid,
-                          'prodimages' : imagesUrlList,
+                          'prodimages' :imagesUrlList,
                           'discount' : discount,
                           'productdescription': proDesc,
                         }).whenComplete(() {
@@ -309,6 +309,7 @@ void uploadProduct() async{
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.38,
                         child: TextFormField(
+                          initialValue: '0',
                           maxLength: 2,
                           validator: (value){
                             if(value!.isEmpty){
@@ -318,8 +319,8 @@ void uploadProduct() async{
                             }
                             return null;
                           },
-                          onSaved: (value){
-                            discount = int.parse(value!);
+                          onSaved: (String? value){
+                           discount = int.parse(value!);
                           },
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),
                           decoration: textFormDecoration.copyWith(
@@ -471,4 +472,4 @@ extension DiscountValidator on String {
   bool isValidDiscount() {
     return RegExp(r'^([0-9]*)$').hasMatch(this);                                                            
   }
-}                   
+}             

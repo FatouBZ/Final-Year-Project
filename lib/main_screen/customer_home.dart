@@ -53,7 +53,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                 child: const Icon (Icons.shopping_cart)), 
                 label: 'Cart'
                 ),
-          const  BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
+          const  BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           ],
           onTap: (index) {
             setState(() {

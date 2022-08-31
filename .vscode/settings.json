@@ -28,5 +28,6 @@
     "**/.vscode",
     "**/.vscode/**"
   ],
-  "C_Cpp.errorSquiggles": "Disabled"
+  "C_Cpp.errorSquiggles": "Disabled",
+  "cmake.sourceDirectory": "${workspaceFolder}/bug/linux"
 }

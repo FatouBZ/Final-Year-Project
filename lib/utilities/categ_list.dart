@@ -20,17 +20,8 @@ List<String> maincateg = [
   'side dish',
   'breackfast',
   'other',
-];
-
-List<String> service = [
-  'subcategory',
-  'tutor',
-  'french teacher',
-  'recrutment',
-  'graphic designer',
-  'developper',
-  'other',
 ];*/
+
 List<String> men = [
   'subcategory',
   'shirt',
@@ -159,3 +150,22 @@ List<String> bags = [
   'women bags',
   'other'
 ];
+
+List<String> servcateg = [
+  'select service',
+  'service'
+  
+];
+
+List<String> service = [
+  'subcategory',
+  'Tutor',
+  'company',
+  'digitalmarketing',
+  'wrritingtranslation',
+  'business',
+  'graphicdesigne',
+  'videoanimation',
+  'lifestyle'
+];
+

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,9 +8,12 @@ import 'package:multi_store_app/wigets/blue_button.dart';
 import 'package:multi_store_app/wigets/appbar_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:http/http.dart' as http;
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 
 import '../provider/cart_provider.dart';
+import '../provider/stripe_id.dart';
 class PayementScreen extends StatefulWidget {
   const PayementScreen({Key? key}) : super(key: key);
 
@@ -192,8 +197,8 @@ class _PayementScreenState extends State<PayementScreen> {
                   color: Colors.grey.shade200,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: BlueButton(label: 'Confirm ${totalPaid.toStringAsFixed(2)} GH₵',
-                     width: 1, onPressed: (){
+                    child: BlueButton (label: 'Confirm ${totalPaid.toStringAsFixed(2)} GH₵',
+                     width: 1, onPressed: () async {
                       if (selectedValue == 1){
                         showModalBottomSheet(
                           context: context,
@@ -256,16 +261,22 @@ class _PayementScreenState extends State<PayementScreen> {
                                       });
                                      });
                                   }
-                                  context.read<Cart>().clearCart();
+                                  await Future.delayed(const Duration(microseconds: 100)).whenComplete(() {
+                                    context.read<Cart>().clearCart();
                                   Navigator.popUntil(context, ModalRoute.withName('/customer_home'));
+                                  });
+                                  
                                  },
                                  width: 0.9)
                                 ]),
                             ),
                            ));
                         
-                      }else if(selectedValue==2){
-
+                      }else if(selectedValue == 2){
+                        print('visa');
+                        int payment = totalPaid.round();
+                        int pay = payment * 100;
+                        await makePayment(data, pay.toString());
                       }else if(selectedValue ==3){
 
                       }
@@ -279,5 +290,111 @@ class _PayementScreenState extends State<PayementScreen> {
           child: CircularProgressIndicator(),
         );
   });
+  }
+
+
+  Map<String, dynamic>? paymentIntentData;
+  Future<void> makePayment(dynamic data, String total) async {
+    try {
+      paymentIntentData = await createPaymentIntent(total, 'USD');
+      await Stripe.instance.initPaymentSheet(
+          paymentSheetParameters: SetupPaymentSheetParameters(
+              paymentIntentClientSecret: paymentIntentData!['client_secret'],
+             
+              merchantDisplayName: 'ANNIE'));
+ 
+      await displayPaymentSheet(data);
+    } catch (e) {
+      print('exception:$e');
+    }
+  }
+ 
+ 
+  displayPaymentSheet(dynamic data) async {
+    try {
+      await Stripe.instance
+          .presentPaymentSheet(
+              parameters: PresentPaymentSheetParameters(
+        clientSecret: paymentIntentData!['client_secret'],
+        confirmPayment: true,
+      ))
+          .then((value) async {
+        paymentIntentData = null;
+        print('paid');
+ 
+        showProgess();
+        for (var item in context.read<Cart>().getItems) {
+          CollectionReference orderRef =
+              FirebaseFirestore.instance.collection('orders');
+          orderId = const Uuid().v4();
+          await orderRef.doc(orderId).set({
+ 'cid': data['cid'],
+           
+                                      'custname':data['name'],
+                                      'email':data['email'],
+                                      'address':data['address'],
+                                      'phone':data['phone'],
+                                      'profileimage':data['profileimage'],
+
+                                      'sid':item.suppId,
+
+
+                                      'productid':item.documentId,
+                                      'orderid':orderId,
+                                      'ordername' : item.name,
+                                      'orderimage': item.imageqUrl.first,
+                                      'orderqty': item.qty,
+                                      'orderprice': item.qty * item.price,
+
+                                      'deliverystatus':'preparing',
+                                      'deliverydate':'',
+                                      'orderdate': DateTime.now(),
+                                      'paymentstatus':'cash on delivery',
+                                      'orderreview':false,
+ }).whenComplete(() async {
+            await FirebaseFirestore.instance
+                .runTransaction((transaction) async {
+              DocumentReference documentReference = FirebaseFirestore.instance
+                  .collection('products')
+                  .doc(item.documentId);
+              DocumentSnapshot snapshot2 =
+                  await transaction.get(documentReference);
+              transaction.update(documentReference,
+                  {'instock': snapshot2['instock'] - item.qty});
+            });
+          });
+        }
+ await Future.delayed(const Duration(microseconds: 100))
+            .whenComplete(() {
+          context.read<Cart>().clearCart();
+          Navigator.popUntil(context, ModalRoute.withName('/customer_home'));
+        });
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+ 
+  createPaymentIntent(String total, String currency) async {
+    try {
+      Map<String, dynamic> body = {
+        'amount': total,
+        'currency': currency,
+        'payment_method_types[]': 'card'
+      };
+      print(body);
+ 
+      var response = await http.post(
+          Uri.parse('https://api.stripe.com/v1/payment_intents'),
+          body: body,
+   headers: {
+            'Authorization': 'Bearer $stripeSecretKey',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          });
+ 
+      return jsonDecode(response.body);
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }

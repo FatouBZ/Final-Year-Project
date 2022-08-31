@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:multi_store_app/minor_screen/edit_store.dart';
+import 'package:multi_store_app/models/service_model.dart';
 import 'package:multi_store_app/wigets/appbar_widget.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 import '../models/product_model.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 class VisitStore extends StatefulWidget {
   final String suppId;
   const VisitStore({ Key? key, required this.suppId}) : super(key: key);
@@ -21,6 +24,10 @@ class _VisitStoreState extends State<VisitStore> {
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> productsStream = FirebaseFirestore.instance
      .collection('products')
+     .where('sid', isEqualTo: widget.suppId)
+    .snapshots();
+    final Stream<QuerySnapshot> serviceStream = FirebaseFirestore.instance
+     .collection('service')
      .where('sid', isEqualTo: widget.suppId)
     .snapshots();
 
@@ -48,8 +55,12 @@ class _VisitStoreState extends State<VisitStore> {
             backgroundColor:  Colors.blueGrey.shade100,
             appBar: AppBar(
               toolbarHeight: 100, 
-              flexibleSpace: Image.asset('images/inapp/coverimage.jpg', fit: BoxFit.cover,
-              ),
+              flexibleSpace: 
+              data['coverimage'] == ''? Image.asset('images/inapp/coverimage.jpg',
+               fit: BoxFit.cover,
+              )
+              :Image.network(data['coverimage'],
+               fit: BoxFit.cover,),
               leading: const YellowBackButton(),
               title: Row(
                 children: [
@@ -79,7 +90,7 @@ class _VisitStoreState extends State<VisitStore> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(data['storename'].toUpperCase(), 
-                            style: const TextStyle(fontSize: 20, color: Colors.yellow),),
+                            style: const TextStyle(fontSize: 16, color: Colors.yellow),),
                           ),
                         ],
                       ),
@@ -91,8 +102,9 @@ class _VisitStoreState extends State<VisitStore> {
                           color: Colors.yellow,
                           border: Border.all(width:3, color: Colors.black),
                           borderRadius: BorderRadius.circular(15)),
-                          child:  MaterialButton(onPressed: (){
-                            
+                          child:  MaterialButton(
+                            onPressed: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  EditStore(data: data,)));
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -124,39 +136,78 @@ class _VisitStoreState extends State<VisitStore> {
                 ],
               ),
             ),
-            body: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: StreamBuilder<QuerySnapshot>(
-      stream: productsStream,
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) {
-          return const Text('Something went wrong');
-        }
+            body: 
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    StreamBuilder<QuerySnapshot>(
+                      stream: productsStream,
+                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          return const Text('Something went wrong');
+                        }
+            
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return 
+                          const Material(
+                    child:   Center(child: CircularProgressIndicator(),));
+                        }
+                        if(snapshot.data!.docs.isEmpty){
+                          return const Center(child:  Text('This Store \n\n has no items yet !',
+                          style: TextStyle(fontSize: 26, color: Colors.blueGrey,
+                           fontWeight: FontWeight.bold, fontFamily: 'Acme', letterSpacing: 1.5),));
+                        }
+                        return SingleChildScrollView (
+                          child: StaggeredGridView.countBuilder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.docs.length,
+                    crossAxisCount: 2,
+                           itemBuilder: (context,index){
+                    return ProductModel(products: snapshot.data!.docs[index],);
+                           },
+                    staggeredTileBuilder: (context) => const StaggeredTile.fit(1)
+                    ),
+                        );
+                      },
+                    ),
+                    StreamBuilder<QuerySnapshot>(
+                      stream: serviceStream,
+                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          return const Text('Something went wrong');
+                        }
+            
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return 
+                          const Material(
+                    child:   Center(child: CircularProgressIndicator(),));
+                        }
+                        if(snapshot.data!.docs.isEmpty){
+                          return const Center(child:  Text('This Store \n\n has no items yet !',
+                          style: TextStyle(fontSize: 26, color: Colors.blueGrey,
+                           fontWeight: FontWeight.bold, fontFamily: 'Acme', letterSpacing: 1.5),));
+                        }
+                        return SingleChildScrollView (
+                          child: StaggeredGridView.countBuilder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.docs.length,
+                    crossAxisCount: 2,
+                           itemBuilder: (context,index){
+                    return ServiceModel(service: snapshot.data!.docs[index],);
+                           },
+                    staggeredTileBuilder: (context) => const StaggeredTile.fit(1)
+                    ),
+                        );
+                      },
+                    ),
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return 
-          const Material(
-              child:   Center(child: CircularProgressIndicator(),));
-        }
-        if(snapshot.data!.docs.isEmpty){
-          return const Center(child:  Text('This Store \n\n has no items yet !',
-          style: TextStyle(fontSize: 26, color: Colors.blueGrey,
-           fontWeight: FontWeight.bold, fontFamily: 'Acme', letterSpacing: 1.5),));
-        }
-        return SingleChildScrollView (
-          child: StaggeredGridView.countBuilder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: snapshot.data!.docs.length,
-              crossAxisCount: 2,
-           itemBuilder: (context,index){
-              return ProductModel(products: snapshot.data!.docs[index],);
-           },
-              staggeredTileBuilder: (context) => const StaggeredTile.fit(1)
+                  ],
+                ),
               ),
-        );
-      },
-    ),
             ),
             floatingActionButton:
              FloatingActionButton(

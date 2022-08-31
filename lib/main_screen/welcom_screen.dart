@@ -117,7 +117,7 @@ class _WelcomScreenState extends State<WelcomScreen>
                       const SizedBox(
                         height: 6,
                       ),
-                      Container(
+                       Container(
                           height: 50,
                           width: MediaQuery.of(context).size.width * 0.9,
                           decoration: const BoxDecoration(
@@ -128,26 +128,23 @@ class _WelcomScreenState extends State<WelcomScreen>
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              AnimatedLogo(controller: _controller),
-                              BlueButton(
+                               AnimatedLogo(controller: _controller),
+                               BlueButton(
                                   label: 'Log In',
                                   onPressed: () {
                                      Navigator.pushReplacementNamed(
                                       context, '/supplier_login');
                                   },
                                   width: 0.25),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: BlueButton(
+                                  BlueButton(
                                     label: 'Sign Up',
                                     onPressed: () {
                                        Navigator.pushReplacementNamed(
                                       context, '/supplier_signup');
                                     },
                                     width: 0.25),
-                              ),
-                            ],
-                          )),
+                          ],)   
+                       )
                     ],
                   ),
                 ],

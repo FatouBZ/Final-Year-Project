@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:multi_store_app/gallery/service_galery.dart';
 import '../gallery/accessories_galery.dart';
 import '../gallery/bags_galery.dart';
 import '../gallery/beauty_category.dart';
@@ -21,7 +22,7 @@ class _HomeScreentState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 9,
+      length: 10,
       child: Scaffold(
         backgroundColor: Colors.blueGrey.shade100.withOpacity(0.5),
         appBar: AppBar(
@@ -42,14 +43,14 @@ class _HomeScreentState extends State<HomeScreen> {
               RepeatedTab(label: 'Home Appliances'),
               RepeatedTab(label: 'kids'),
               RepeatedTab(label: 'Beauty'),
-              //RepeatedTab(label: 'Services'),
+              RepeatedTab(label: 'Services'),
               //RepeatedTab(label: 'Company'),
               //RepeatedTab(label: 'Foods'),
 
             ],
           ),
         ),
-        body: const TabBarView(
+        body:  const TabBarView(
           children: [
             MenGalleryScreen(),
             WomenGalleryScreen(),
@@ -59,8 +60,8 @@ class _HomeScreentState extends State<HomeScreen> {
             AccessoriesGalleryScreen(),
             HomeGalleryScreen(),
             KidsGalleryScreen(),
-           BeautyGalleryScreen()
-            //Center(child: Text('Services screen')),
+            BeautyGalleryScreen(),
+            ServicesGalleryScreen(),
             //Center(child: Text('Company screen')),
             //Center(child: Text('Food screen')),
           ],

@@ -9,10 +9,10 @@ class SupplierLogin extends StatefulWidget {
   const SupplierLogin({Key? key}) : super(key: key);
 
   @override
-  State<SupplierLogin> createState() => _CustomerSignupState();
+  State<SupplierLogin> createState() => _SupplierSignupState();
 }
 
-class _CustomerSignupState extends State<SupplierLogin> {
+class _SupplierSignupState extends State<SupplierLogin> {
   late String email;
   late String password;
   bool processing = false;

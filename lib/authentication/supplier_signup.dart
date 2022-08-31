@@ -88,7 +88,6 @@ void signUp() async{
 
                               await ref.putFile(File(_imageFile!.path));
                               _uid = FirebaseAuth.instance.currentUser!.uid;
-
                               storeLogo = await ref.getDownloadURL();
                               await suppliers.doc(FirebaseAuth.instance.currentUser!.uid).set({
                                 'storename': storeName,

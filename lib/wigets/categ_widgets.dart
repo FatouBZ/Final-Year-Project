@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../minor_screen/subcateg_products.dart';
+import '../minor_screen/subcateg_services.dart';
 
 class SlideBar extends StatelessWidget {
   final String mainCategName;
@@ -24,7 +25,7 @@ class SlideBar extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    mainCategName == 'food'
+                    mainCategName == 'service'
                         ? const Text('')
                         : const Text(
                             ' << ',
@@ -86,6 +87,44 @@ class SubCategModel extends StatelessWidget {
             child: Image(image: AssetImage(assetName)),
           ),
           Text(subCategLable, style: const TextStyle(fontSize: 10))
+        ],
+      ),
+    );
+  }
+}
+class ServiceSubCategModel extends StatelessWidget {
+  final String mainCategName2;
+  final String subCategName2;
+  final String assetName2;
+  final String subCategLable2;
+  const ServiceSubCategModel({
+    Key? key,
+    required this.mainCategName2,
+    required this.subCategName2,
+    required this.assetName2,
+    required this.subCategLable2,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SubCategService(
+                      mainCategName2: mainCategName2,
+                      subCategName2: subCategName2,
+                    )));
+      },
+      child: Column(
+        children: [
+          SizedBox(
+            height: 70,
+            width: 70,
+            child: Image(image: AssetImage(assetName2)),
+          ),
+          Text(subCategLable2, style: const TextStyle(fontSize: 10))
         ],
       ),
     );

@@ -14,6 +14,7 @@ import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 import 'package:provider/provider.dart';
 import '../models/product_model.dart';
 import 'package:collection/collection.dart';
+import 'package:expandable/expandable.dart';
 import 'package:badges/badges.dart';
 class ProductDetailsScreen extends StatefulWidget {
   final dynamic proList;
@@ -25,21 +26,30 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  late final Stream<QuerySnapshot> _productsStream =
-   FirebaseFirestore.instance.collection('products')
+  late final Stream<QuerySnapshot> _proListStream =
+   FirebaseFirestore.instance.collection('proList')
    .where('maincategory', isEqualTo: widget.proList['maincategory'])
    .where('subcategory', isEqualTo: widget.proList['subcategory'])
    .snapshots();
+   late final Stream<QuerySnapshot> reviewsStream =
+   FirebaseFirestore.instance.collection('products')
+   .doc(widget.proList['productid']).collection('reviews')
+   .snapshots();
   
+
 
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
    late List<dynamic> imagesList = widget.proList['prodimages'];
+   
   @override
   Widget build(BuildContext context) {
+   
      var existingItemCart = context.read<Cart>()
                 .getItems.firstWhereOrNull((product)
                  => product.documentId == widget
                  .proList['productid']);
+                     var onSale = widget.proList['discount'];
+
     
     return  Material(
       child: SafeArea (
@@ -114,28 +124,40 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                        Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                    
-                    Row(
-                      children: [
-                        Text(
-                          'GH₵ ', 
-                        style: TextStyle(
-                                      color: Colors.red.shade600,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600
-                                    ),
-                        ),
-                    
-                      Text(
-                      widget.proList['price'].toStringAsFixed(2), 
-                    style: TextStyle(
-                                  color: Colors.red.shade600,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600
+                      Row(
+                                  children: [
+                                    Text('GH₵ ', 
+                                    style: TextStyle(
+                                    color: Colors.red.shade600,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600
+                              ),),
+                              Text(widget.proList['price'].toStringAsFixed(2),
+                              style: onSale!=0 ?
+                             const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                                decoration: TextDecoration.lineThrough,
+                                fontWeight: FontWeight.w600
+                              ) : TextStyle(
+                                color: Colors.red.shade600,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600
+                              ),
+                              ),
+                              const SizedBox(width: 6,),
+                           onSale!=0 ?   Text(
+                                ((1-(onSale/100))*widget.proList['price']).toStringAsFixed(2),
+                              style:  TextStyle(
+                                color: Colors.red.shade600,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600
+                              ),
+                              ):const Text(''),
+                              const SizedBox(width: 6),
+                            
+                                  ],
                                 ),
-                    ), 
-                     ],
-                    ),
                     
                     IconButton(
                                  onPressed: (){
@@ -153,7 +175,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                  .removeThis(widget.proList['productid'])
                  : context.read<Wish>().addWishItem(
                     widget.proList['productname'],
-                    widget.proList['price'], 
+                    onSale!=0? 
+                    ((1-(onSale/100))*widget.proList['price'])
+                     :widget.proList['price'], 
                     1,
                     widget.proList['instock'], 
                     widget.proList['prodimages'],
@@ -205,10 +229,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 color: Colors.blueGrey.shade800,
                ),
                ),
+
+               ExpandableTheme(
+                data: const ExpandableThemeData(
+                  iconSize: 30,
+                  iconColor: Colors.blue),
+                child: reviews(reviewsStream)),
                const productDetailHeader(label: ' Similar Items ',
                ),
                SizedBox(child: StreamBuilder<QuerySnapshot>(
-              stream: _productsStream,
+              stream: _proListStream,
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
                   return const Text('Something went wrong');
@@ -276,19 +306,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   } else{
                     context.read<Cart>().addItem(
                     widget.proList['productname'], 
-                    widget.proList['price'], 
+                    onSale!=0? 
+                    ((1-(onSale/100))*widget.proList['price'])
+                    :widget.proList['price'], 
                     1,
                     widget.proList['instock'], 
                     widget.proList['prodimages'],
                     widget.proList['productid'],
                     widget.proList['sid'],
                   );
-                  }
-                
-                
-                
-        
-                  
+                  } 
                 }, width: 0.55)
               ],),
             ),
@@ -352,4 +379,57 @@ class  productDetailHeader extends StatelessWidget {
       ]),
     );
   }
+}
+
+Widget reviews( var reviewsStream){
+  return ExpandablePanel(
+    header: const Padding(
+      padding: EdgeInsets.all(10),
+      child: Text('Reviews',
+      style: TextStyle(
+        color: Colors.blue, fontSize: 24, fontWeight: FontWeight.bold
+      )
+      ),),
+    collapsed:  SizedBox(height: 230, 
+    child: reviewsAll (reviewsStream) ),
+    expanded: reviewsAll (reviewsStream));
+}
+Widget reviewsAll(var reviewsStream){
+return StreamBuilder<QuerySnapshot>(
+      stream: reviewsStream,
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot2) {
+      
+        if (snapshot2.connectionState == ConnectionState.waiting) {
+          return const  Center(child: CircularProgressIndicator(),);
+        }
+        if(snapshot2.data!.docs.isEmpty){
+          return const Center(child:  Text('This item \n\n has no Reviews yet !',
+          style: TextStyle(fontSize: 26, color: Colors.blueGrey,
+           fontWeight: FontWeight.bold, fontFamily: 'Acme', letterSpacing: 1.5),));
+        }
+        return ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: snapshot2.data!.docs.length,
+          itemBuilder: (context, index){
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundImage: NetworkImage(
+                snapshot2.data!.docs[index]['profileimage'])),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                  Text(snapshot2.data!.docs[index]['name']),
+                  Row(children: [
+                  Text(snapshot2.data!.docs[index]['rate'].toString()),
+                  const Icon(Icons.star,color: Colors.amber,)
+                ]),
+                ]),
+                
+                subtitle: Text(snapshot2.data!.docs[index]['comment']),
+                
+          );
+        });
+      },
+    );
 }
